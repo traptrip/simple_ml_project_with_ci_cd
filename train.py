@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from collections import defaultdict
 
@@ -10,6 +9,7 @@ from tqdm import tqdm
 from src.dataset import get_dataloaders
 from src.utils import read_config, get_last_logs_dir
 from src.net import Net
+from src.logger import LOGGER
 
 
 def init_embeddings_db(train_dl, net, emb_size, batch_size, device, save_path):
@@ -42,22 +42,22 @@ if __name__ == "__main__":
     cfg = read_config(Path(__file__).parent / "config.yml")
 
     # prepare data
-    logging.info("Prepare dataloaders")
+    LOGGER.info("Prepare dataloaders")
     train_dl, val_dl, _ = get_dataloaders(Path(cfg.data.data_dir), cfg.train.batch_size)
 
     # prepare trainer
-    logging.info("Prepare trainer")
+    LOGGER.info("Prepare trainer")
     net = Net(cfg.train)
 
     logger = TensorBoardLogger(cfg.train.trainer.default_root_dir)
     trainer = pl.Trainer(logger=logger, **cfg.train.trainer)
 
     # train
-    logging.info("Training")
+    LOGGER.info("Training")
     trainer.fit(net, train_dl, val_dl)
 
     # prepare embeddings_file
-    logging.info("Initialize embeddings DB")
+    LOGGER.info("Initialize embeddings DB")
     init_embeddings_db(
         train_dl,
         net,
