@@ -7,9 +7,11 @@ from tqdm import tqdm
 from src.utils import read_config
 from src.net import Net
 from src.dataset import get_dataloaders
+from src.logger import LOGGER
 
 
 def predict(net, test_dataloader, emb_db, device, save_path, thresh=0.8):
+    LOGGER.info("Predicting")
     train_embs, train_labels = torch.stack(list(emb_db.values())), list(emb_db.keys())
     train_embs = train_embs.squeeze(1)
     labels = [[] for _ in range(len(test_dataloader.dataset))]
